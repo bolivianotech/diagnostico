@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Env files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build caches
+.cache/
+.parcel-cache/
+
+# Ignore system files
+desktop.ini
+
+# Keep dist for deployment (do not ignore)
+# dist/
