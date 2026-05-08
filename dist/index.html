@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 0 — Diagnóstico | Programación IV · UPDS 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --navy:    #0D1B2A;
+    --blue:    #1A56DB;
+    --cyan:    #06B6D4;
+    --orange:  #F59E0B;
+    --green:   #10B981;
+    --red:     #EF4444;
+    --ghost:   rgba(255,255,255,0.06);
+    --border:  rgba(255,255,255,0.10);
+    --text:    #E2E8F0;
+    --muted:   #94A3B8;
+    --card:    #111827;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND GRID ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(26,86,219,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,86,219,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative; z-index: 10;
+    padding: 48px 24px 32px;
+    max-width: 860px; margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(6,182,212,0.12);
+    border: 1px solid rgba(6,182,212,0.3);
+    color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .badge::before { content: '◆'; font-size: 8px; }
+
+  header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800; line-height: 1.1;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  header h1 span { color: var(--cyan); }
+
+  header p {
+    font-size: 15px; color: var(--muted); line-height: 1.7;
+    max-width: 620px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .meta-row {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .meta-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .meta-item strong { color: var(--orange); }
+
+  /* ── MAIN ── */
+  main {
+    position: relative; z-index: 10;
+    max-width: 860px; margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── STUDENT INFO ── */
+  .student-info {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+  .student-info h2 {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 20px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width:540px){ .info-grid { grid-template-columns: 1fr; } }
+
+  .info-field label {
+    display: block; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 6px;
+    font-family: 'Space Mono', monospace;
+  }
+  .info-field input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .info-field input:focus { border-color: var(--cyan); }
+
+  /* ── SECTION ── */
+  .section {
+    margin-top: 40px;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .section-title { font-size: 18px; font-weight: 700; color: #fff; }
+  .section-sub   { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: rgba(6,182,212,0.25); }
+
+  .q-top {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .q-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--cyan); min-width: 24px;
+    padding-top: 2px;
+  }
+  .q-text {
+    font-size: 14px; font-weight: 600; line-height: 1.6; color: var(--text);
+  }
+  .q-context {
+    font-size: 12px; color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 8px; padding-left: 36px; }
+
+  .opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .opt:hover { background: var(--ghost); border-color: var(--border); }
+  .opt input[type="radio"] { display: none; }
+
+  .opt-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0; margin-top: 1px;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt-dot::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    opacity: 0; transform: scale(0);
+    transition: all 0.15s;
+  }
+  .opt input:checked ~ .opt-dot {
+    border-color: var(--cyan);
+  }
+  .opt input:checked ~ .opt-dot::after {
+    opacity: 1; transform: scale(1);
+  }
+  .opt.selected {
+    background: rgba(6,182,212,0.07);
+    border-color: rgba(6,182,212,0.3);
+  }
+
+  .opt-label { font-size: 13px; line-height: 1.5; }
+  .opt-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    margin-left: auto; flex-shrink: 0; padding-top: 2px;
+  }
+
+  /* ── OPEN TEXT ── */
+  .q-open textarea {
+    width: 100%; margin-left: 36px; width: calc(100% - 36px);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; line-height: 1.7;
+    resize: vertical; min-height: 80px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .q-open textarea:focus { border-color: var(--cyan); }
+
+  /* ── SUBMIT ── */
+  .submit-zone {
+    margin-top: 48px; text-align: center;
+  }
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px; height: 4px;
+    margin-bottom: 32px; overflow: hidden;
+  }
+  /* Mantener la barra visible al hacer scroll */
+  .progress-sticky{
+    position: sticky;
+    top: 18px;
+    z-index: 12;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    backdrop-filter: blur(2px);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    width: 0%; transition: width 0.4s ease;
+    border-radius: 4px;
+  }
+  .progress-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 8px; text-align: right;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color: #fff;
+    border: none; cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700;
+    padding: 16px 48px; border-radius: 8px;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 0 32px rgba(6,182,212,0.2);
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── RESULTS ── */
+  #results { display: none; margin-top: 48px; }
+
+  .result-hero {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .result-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center top, rgba(6,182,212,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .result-level-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .result-score-big {
+    font-size: clamp(56px, 12vw, 96px);
+    font-weight: 800; line-height: 1;
+    margin-bottom: 8px;
+  }
+  .result-label {
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 700; color: #fff;
+    margin-bottom: 12px;
+  }
+  .result-desc {
+    font-size: 14px; color: var(--muted);
+    max-width: 520px; margin: 0 auto;
+    line-height: 1.7; font-family: 'Space Mono', monospace;
+  }
+
+  /* Level color maps */
+  .lvl-A .result-level-badge { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .lvl-A .result-score-big   { color: var(--red); text-shadow: 0 0 40px rgba(239,68,68,0.3); }
+  .lvl-B .result-level-badge { background: rgba(245,158,11,0.15); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+  .lvl-B .result-score-big   { color: var(--orange); text-shadow: 0 0 40px rgba(245,158,11,0.3); }
+  .lvl-C .result-level-badge { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.3); }
+  .lvl-C .result-score-big   { color: var(--cyan); text-shadow: 0 0 40px rgba(6,182,212,0.3); }
+  .lvl-D .result-level-badge { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .lvl-D .result-score-big   { color: var(--green); text-shadow: 0 0 40px rgba(16,185,129,0.3); }
+
+  /* ── RECO BLOCKS ── */
+  .reco-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 32px;
+  }
+  @media(max-width:620px){ .reco-grid { grid-template-columns: 1fr; } }
+
+  .reco-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .reco-block-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .reco-icon {
+    width: 32px; height: 32px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .reco-block-title { font-size: 14px; font-weight: 700; color: #fff; }
+  .reco-block-sub   { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  .reco-list { list-style: none; }
+  .reco-list li {
+    font-size: 12px; color: var(--muted);
+    padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 8px; align-items: flex-start;
+    font-family: 'Space Mono', monospace; line-height: 1.5;
+  }
+  .reco-list li:last-child { border-bottom: none; }
+  .reco-list li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  /* ── STUDENT RESULT CARD ── */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .result-card h3 {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 16px;
+  }
+
+  .score-breakdown {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .score-item { text-align: center; }
+  .score-item .val {
+    font-size: 28px; font-weight: 800;
+    font-family: 'Space Mono', monospace;
+  }
+  .score-item .lbl {
+    font-size: 11px; color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  /* ── COPY BUTTON ── */
+  .btn-copy {
+    background: var(--ghost);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; padding: 10px 20px;
+    border-radius: 6px; cursor: pointer;
+    transition: all 0.2s; margin-top: 24px;
+  }
+  .btn-copy:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 10;
+    text-align: center; padding: 32px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-card { animation: fadeUp 0.4s ease both; }
+  .q-card:nth-child(1)  { animation-delay: 0.05s; }
+  .q-card:nth-child(2)  { animation-delay: 0.10s; }
+  .q-card:nth-child(3)  { animation-delay: 0.15s; }
+  .q-card:nth-child(4)  { animation-delay: 0.20s; }
+  .q-card:nth-child(5)  { animation-delay: 0.25s; }
+  .q-card:nth-child(6)  { animation-delay: 0.30s; }
+  .q-card:nth-child(7)  { animation-delay: 0.35s; }
+  .q-card:nth-child(8)  { animation-delay: 0.40s; }
+  .q-card:nth-child(9)  { animation-delay: 0.45s; }
+  .q-card:nth-child(10) { animation-delay: 0.50s; }
+  .q-card:nth-child(11) { animation-delay: 0.55s; }
+  .q-card:nth-child(12) { animation-delay: 0.60s; }
+
+  #results { animation: fadeUp 0.5s ease both; }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 3px; margin: 2px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    color: var(--cyan);
+  }
+  .tag.warn {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.2);
+    color: var(--orange);
+  }
+  .tag.ok {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.2);
+    color: var(--green);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header>
+  <div class="badge">UPDS · Ingeniería de Sistemas · 2026</div>
+  <h1>Actividad 0<br><span>Diagnóstico de Entrada</span></h1>
+  <p>Programación IV — Sistema Distribuido con APIs REST y Comunicación en Tiempo Real<br>
+  Esta actividad no tiene nota. Su propósito es que conozcas tu punto de partida real y recibas recomendaciones personalizadas para aprovechar al máximo el curso.</p>
+  <div class="meta-row">
+    <div class="meta-item">⏱ <strong>~20 min</strong> estimados</div>
+    <div class="meta-item">📋 <strong>12 preguntas</strong></div>
+    <div class="meta-item">🎯 <strong>Sin nota</strong> — Obligatoria</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<main>
+
+  <!-- DATOS DEL ESTUDIANTE -->
+  <div class="student-info">
+    <h2>// Datos del estudiante</h2>
+    <div class="info-grid">
+      <div class="info-field">
+        <label>Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Tu nombre y apellido">
+      </div>
+      <div class="info-field">
+        <label>Carrera / Semestre</label>
+        <input type="text" id="carrera" placeholder="Ej: Ing. Sistemas — 7mo sem.">
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-sticky">
+    <div class="progress-label"><span id="prog-count">0</span> / 11 preguntas respondidas</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+  </div>
+
+  <!-- ══════════ BLOQUE 1: FUNDAMENTOS ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-title">Fundamentos de Programación y POO</div>
+        <div class="section-sub">Base conceptual necesaria para el curso</div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q1</span>
+        <div>
+          <div class="q-text">¿Con qué nivel describes tu dominio de Programación Orientada a Objetos?</div>
+          <div class="q-context">Herencia, polimorfismo, encapsulamiento, abstracción.</div>
+        </div>
+      </div>
+      <div class="options" id="q1">
+        <label class="opt"><input type="radio" name="q1" value="1"><span class="opt-dot"></span><span class="opt-label">No lo conozco o solo lo escuché.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q1" value="2"><span class="opt-dot"></span><span class="opt-label">Entiendo los conceptos pero me cuesta aplicarlos sin ejemplos.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q1" value="3"><span class="opt-dot"></span><span class="opt-label">Los aplico correctamente en proyectos propios.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q1" value="4"><span class="opt-dot"></span><span class="opt-label">Los aplico y puedo enseñarlos o revisarlos en código de otros.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q2</span>
+        <div>
+          <div class="q-text">¿Conoces o has aplicado algún patrón de diseño de software?</div>
+          <div class="q-context">MVC, Repository, Factory, Singleton, Observer, Strategy…</div>
+        </div>
+      </div>
+      <div class="options" id="q2">
+        <label class="opt"><input type="radio" name="q2" value="1"><span class="opt-dot"></span><span class="opt-label">No sé qué son los patrones de diseño.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q2" value="2"><span class="opt-dot"></span><span class="opt-label">He escuchado el término, conozco MVC de forma básica.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q2" value="3"><span class="opt-dot"></span><span class="opt-label">Apliqué MVC u otro patrón en un proyecto real.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q2" value="4"><span class="opt-dot"></span><span class="opt-label">Conozco y aplico múltiples patrones según el problema.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOQUE 2: APIs REST ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-title">APIs REST y Protocolos HTTP</div>
+        <div class="section-sub">Bloque 1 del curso</div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q3</span>
+        <div>
+          <div class="q-text">¿Cuál es tu nivel de experiencia construyendo APIs REST?</div>
+          <div class="q-context">Endpoints, verbos HTTP (GET/POST/PUT/DELETE), status codes, JSON.</div>
+        </div>
+      </div>
+      <div class="options" id="q3">
+        <label class="opt"><input type="radio" name="q3" value="1"><span class="opt-dot"></span><span class="opt-label">No sé qué es una API REST.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q3" value="2"><span class="opt-dot"></span><span class="opt-label">Sé qué es, consumí una API pero nunca construí una.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q3" value="3"><span class="opt-dot"></span><span class="opt-label">Construí una API con CRUD básico en algún framework.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q3" value="4"><span class="opt-dot"></span><span class="opt-label">Construí APIs con autenticación, validación y manejo de errores.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q4</span>
+        <div>
+          <div class="q-text">¿Con qué framework(s) has trabajado o conoces?</div>
+          <div class="q-context">Selecciona el que mejor describe tu experiencia actual.</div>
+        </div>
+      </div>
+      <div class="options" id="q4">
+        <label class="opt"><input type="radio" name="q4" value="1"><span class="opt-dot"></span><span class="opt-label">Ninguno. Solo programé en consola o scripts simples.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q4" value="2"><span class="opt-dot"></span><span class="opt-label">Usé un framework básico (Flask, Express básico) con tutoriales.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q4" value="3"><span class="opt-dot"></span><span class="opt-label">Desarrollé proyectos reales con Express.js, FastAPI, Laravel o similar.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q4" value="4"><span class="opt-dot"></span><span class="opt-label">Trabajo con frameworks modernos (NestJS, Django REST, Spring Boot) en producción.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOQUE 3: MENSAJERÍA / REDIS ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div>
+        <div class="section-title">Mensajería Asíncrona y Tiempo Real</div>
+        <div class="section-sub">Bloque 2 del curso — Redis Pub/Sub</div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q5</span>
+        <div>
+          <div class="q-text">¿Conoces o has trabajado con sistemas de mensajería o eventos?</div>
+          <div class="q-context">Redis, RabbitMQ, Kafka, WebSockets, Socket.io…</div>
+        </div>
+      </div>
+      <div class="options" id="q5">
+        <label class="opt"><input type="radio" name="q5" value="1"><span class="opt-dot"></span><span class="opt-label">No sé qué es la mensajería asíncrona.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q5" value="2"><span class="opt-dot"></span><span class="opt-label">Entiendo el concepto pero nunca lo implementé.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q5" value="3"><span class="opt-dot"></span><span class="opt-label">Implementé WebSockets o Socket.io en algún proyecto.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q5" value="4"><span class="opt-dot"></span><span class="opt-label">Usé Redis, RabbitMQ o Kafka en un sistema real.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOQUE 4: SEGURIDAD Y BD ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div>
+        <div class="section-title">Seguridad, Autenticación y Bases de Datos</div>
+        <div class="section-sub">Bloque 3 del curso — JWT · Supabase · MongoDB</div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q6</span>
+        <div>
+          <div class="q-text">¿Cuál es tu experiencia con autenticación y seguridad en APIs?</div>
+          <div class="q-context">JWT, OAuth, sesiones, CORS, rate limiting, hashing de contraseñas…</div>
+        </div>
+      </div>
+      <div class="options" id="q6">
+        <label class="opt"><input type="radio" name="q6" value="1"><span class="opt-dot"></span><span class="opt-label">No implementé nada de seguridad en mis aplicaciones.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q6" value="2"><span class="opt-dot"></span><span class="opt-label">Usé sesiones o algún sistema de login básico.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q6" value="3"><span class="opt-dot"></span><span class="opt-label">Implementé JWT o OAuth en al menos un proyecto.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q6" value="4"><span class="opt-dot"></span><span class="opt-label">Implementé auth completa con refresh tokens, roles y protección avanzada.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q7</span>
+        <div>
+          <div class="q-text">¿Cuál es tu nivel de experiencia con bases de datos?</div>
+          <div class="q-context">Relacionales (PostgreSQL, MySQL) y no relacionales (MongoDB, Firebase).</div>
+        </div>
+      </div>
+      <div class="options" id="q7">
+        <label class="opt"><input type="radio" name="q7" value="1"><span class="opt-dot"></span><span class="opt-label">Solo hice consultas SELECT básicas en MySQL.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q7" value="2"><span class="opt-dot"></span><span class="opt-label">Hice CRUD en SQL y conozco JOINs básicos.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q7" value="3"><span class="opt-dot"></span><span class="opt-label">Diseñé esquemas relacionales y usé un ORM (Sequelize, Prisma, etc.).</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q7" value="4"><span class="opt-dot"></span><span class="opt-label">Trabajé con múltiples motores (SQL + NoSQL), optimización de consultas e índices.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOQUE 5: CLOUD / IaC ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div>
+        <div class="section-title">Cloud Computing e Infraestructura como Código</div>
+        <div class="section-sub">Bloque 4 del curso — AWS · CloudFormation · IaC</div>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q8</span>
+        <div>
+          <div class="q-text">¿Cuánto conoces sobre Cloud Computing y sus modelos?</div>
+          <div class="q-context">IaaS, PaaS, SaaS, FaaS. Proveedores: AWS, GCP, Azure.</div>
+        </div>
+      </div>
+      <div class="options" id="q8">
+        <label class="opt"><input type="radio" name="q8" value="1"><span class="opt-dot"></span><span class="opt-label">No sé qué diferencia hay entre IaaS, PaaS y SaaS.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q8" value="2"><span class="opt-dot"></span><span class="opt-label">Conozco los conceptos pero nunca usé un proveedor cloud.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q8" value="3"><span class="opt-dot"></span><span class="opt-label">Usé Heroku, Render, Railway o servicios PaaS básicos.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q8" value="4"><span class="opt-dot"></span><span class="opt-label">Usé AWS, GCP o Azure directamente (EC2, S3, Lambda, Cloud Run…).</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q9</span>
+        <div>
+          <div class="q-text">¿Has escuchado o aplicado el concepto de Infraestructura como Código (IaC)?</div>
+          <div class="q-context">CloudFormation, Terraform, Pulumi, Ansible…</div>
+        </div>
+      </div>
+      <div class="options" id="q9">
+        <label class="opt"><input type="radio" name="q9" value="1"><span class="opt-dot"></span><span class="opt-label">Nunca escuché el término IaC.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q9" value="2"><span class="opt-dot"></span><span class="opt-label">Sé qué es conceptualmente pero nunca lo practiqué.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q9" value="3"><span class="opt-dot"></span><span class="opt-label">Escribí algún archivo YAML/JSON de configuración de infraestructura.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q9" value="4"><span class="opt-dot"></span><span class="opt-label">Usé CloudFormation, Terraform o similar para desplegar infraestructura real.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BLOQUE 6: HERRAMIENTAS Y COLABORACIÓN ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div>
+        <div class="section-title">Herramientas de Desarrollo y Colaboración</div>
+        <div class="section-sub">Competencias transversales del curso</div>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q10</span>
+        <div>
+          <div class="q-text">¿Con qué frecuencia usas Git y GitHub en tus proyectos?</div>
+          <div class="q-context">Commits, branches, pull requests, resolución de conflictos.</div>
+        </div>
+      </div>
+      <div class="options" id="q10">
+        <label class="opt"><input type="radio" name="q10" value="1"><span class="opt-dot"></span><span class="opt-label">No tengo cuenta en GitHub o nunca usé Git.</span><span class="opt-score">Nivel A</span></label>
+        <label class="opt"><input type="radio" name="q10" value="2"><span class="opt-dot"></span><span class="opt-label">Hago commits básicos pero no uso branches ni pull requests.</span><span class="opt-score">Nivel B</span></label>
+        <label class="opt"><input type="radio" name="q10" value="3"><span class="opt-dot"></span><span class="opt-label">Trabajo con branches, pull requests y resuelvo conflictos.</span><span class="opt-score">Nivel C</span></label>
+        <label class="opt"><input type="radio" name="q10" value="4"><span class="opt-dot"></span><span class="opt-label">Uso Git Flow, commits semánticos y revisión de código en equipo.</span><span class="opt-score">Nivel D</span></label>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="q-card">
+      <div class="q-top">
+        <span class="q-num">Q11</span>
+        <div>
+          <div class="q-text">¿Tienes acceso a computadora propia e internet estable?</div>
+          <div class="q-context">Esto nos ayuda a planificar el soporte técnico del laboratorio.</div>
+        </div>
+      </div>
+      <div class="options" id="q11">
+        <label class="opt"><input type="radio" name="q11" value="1"><span class="opt-dot"></span><span class="opt-label">No tengo PC propia, solo acceso al laboratorio de la universidad.</span><span class="opt-score">Info</span></label>
+        <label class="opt"><input type="radio" name="q11" value="2"><span class="opt-dot"></span><span class="opt-label">Tengo PC pero internet lento o inestable en casa.</span><span class="opt-score">Info</span></label>
+        <label class="opt"><input type="radio" name="q11" value="3"><span class="opt-dot"></span><span class="opt-label">Tengo PC y buena conexión a internet.</span><span class="opt-score">Info</span></label>
+        <label class="opt"><input type="radio" name="q11" value="4"><span class="opt-dot"></span><span class="opt-label">Tengo PC, buena conexión y Docker instalado.</span><span class="opt-score">Info</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PREGUNTA ABIERTA ══════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div>
+        <div class="section-title">Expectativas y Contexto Personal</div>
+        <div class="section-sub">Respuesta libre — sin evaluación</div>
+      </div>
+    </div>
+
+    <div class="q-card q-open">
+      <div class="q-top">
+        <span class="q-num">Q12</span>
+        <div>
+          <div class="q-text">¿Qué esperas aprender o lograr en esta materia? ¿Hay algo específico que te preocupe o que quieras mejorar?</div>
+          <div class="q-context">Sé honesto/a. Esta respuesta ayuda al docente a adaptar el curso a tus necesidades reales.</div>
+        </div>
+      </div>
+      <textarea id="q12" placeholder="Escribe aquí tu respuesta…"></textarea>
+    </div>
+  </div>
+
+  <!-- ══════════ SUBMIT ══════════ -->
+  <div class="submit-zone">
+    <button class="btn-submit" id="btn-submit" onclick="calcularResultados()">
+      Ver mi diagnóstico →
+    </button>
+    <div style="margin-top:12px; font-family:'Space Mono',monospace; font-size:11px; color:var(--muted);">
+      Responde todas las preguntas antes de continuar.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ RESULTS ═══════════════════════════ -->
+  <div id="results">
+
+    <!-- Hero nivel -->
+    <div class="result-hero" id="result-hero">
+      <div class="result-level-badge" id="result-badge">Calculando…</div>
+      <div class="result-score-big" id="result-score">—</div>
+      <div class="result-label" id="result-label">—</div>
+      <div class="result-desc" id="result-desc">—</div>
+    </div>
+
+    <!-- Desglose por bloque -->
+    <div class="result-card">
+      <h3>// Desglose por área</h3>
+      <div class="score-breakdown" id="score-breakdown"></div>
+    </div>
+
+    <!-- Recomendaciones personalizadas -->
+    <div id="recos-container"></div>
+
+    <!-- Copiar resultado -->
+    <div style="text-align:center;">
+      <button class="btn-copy" onclick="copiarResultado()">📋 Copiar resultado para entregar al docente</button>
+    </div>
+
+  </div><!-- /results -->
+
+</main>
+
+<footer>
+  Programación IV · UPDS 2026 · Actividad 0 — Diagnóstico de Entrada<br>
+  Ing. M.Sc. Jimmy Nataniel Requena Llorentty · Esta evaluación no tiene nota.
+</footer>
+
+<!-- ═══════════════════════════ SCRIPT ═══════════════════════════ -->
+<script>
+// ── Marcar opción seleccionada visualmente
+document.querySelectorAll('.opt input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function(){
+    const name = this.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.closest('.opt').classList.remove('selected');
+    });
+    this.closest('.opt').classList.add('selected');
+    updateProgress();
+  });
+});
+
+function updateProgress(){
+  const total = 11;
+  let answered = 0;
+  for(let i=1; i<=11; i++){
+    if(document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+  }
+  document.getElementById('prog-count').textContent = answered;
+  document.getElementById('progress-bar').style.width = (answered/total*100) + '%';
+}
+
+// ── DATA: recomendaciones por bloque y nivel
+const RECOS = {
+  fundamentos: {
+    icon: '🧱', color: '#818CF8',
+    title: 'Fundamentos y Patrones de Diseño',
+    sub: 'POO · Patrones · SOLID · Principios',
+    niveles: {
+      bajo: [
+        'Revisar POO: clases, herencia, polimorfismo con JavaScript o Python.',
+        'Estudiar el patrón MVC antes del Día 1 del curso.',
+        'Recurso: freeCodeCamp — "Object Oriented Programming" (YouTube, gratuito).',
+        'Practicar con pequeños ejercicios de clases y objetos en Replit.io.',
+      ],
+      medio: [
+        'Reforzar SOLID: los 5 principios de diseño orientado a objetos.',
+        'Estudiar los patrones Repository y Factory — muy usados en APIs.',
+        'Recurso: refactoring.guru/design-patterns (gratuito, con ejemplos).',
+        'Intentar aplicar MVC en tu primer endpoint del curso.',
+      ],
+      alto: [
+        'Explorar patrones avanzados: CQRS, Event Sourcing para sistemas distribuidos.',
+        'Estudiar Domain-Driven Design (DDD) conceptual — útil para el proyecto.',
+        'Recurso: "Clean Architecture" de Robert C. Martin (conceptos clave en YouTube).',
+      ]
+    }
+  },
+  apis: {
+    icon: '🔌', color: '#06B6D4',
+    title: 'APIs REST y Frameworks',
+    sub: 'HTTP · REST · Express · FastAPI · NestJS',
+    niveles: {
+      bajo: [
+        'Entender HTTP: verbos (GET, POST, PUT, DELETE), status codes (200, 201, 400, 404, 500).',
+        'Instalar Node.js + Express o Python + FastAPI antes del Día 1.',
+        'Recurso: "REST API Tutorial" en restfulapi.net (gratuito).',
+        'Practicar: crear un servidor que devuelva "Hola Mundo" en JSON.',
+        'Estudiar qué es JSON y cómo serializar/deserializar objetos.',
+      ],
+      medio: [
+        'Construir un CRUD completo en Express o FastAPI con manejo de errores.',
+        'Estudiar middlewares: qué son y para qué sirven.',
+        'Recurso: documentación oficial de Express.js — expressjs.com/en/guide.',
+        'Practicar con Thunder Client para probar endpoints.',
+      ],
+      alto: [
+        'Explorar NestJS para arquitecturas más estructuradas y escalables.',
+        'Estudiar versionado de APIs (/v1/, /v2/) y documentación Swagger desde el día 1.',
+        'Implementar rate limiting y validación robusta de datos (zod, class-validator).',
+      ]
+    }
+  },
+  mensajeria: {
+    icon: '⚡', color: '#10B981',
+    title: 'Mensajería Asíncrona y Redis',
+    sub: 'Pub/Sub · Redis · WebSockets · Upstash',
+    niveles: {
+      bajo: [
+        'Entender la diferencia entre comunicación síncrona (HTTP) y asíncrona.',
+        'Crear cuenta gratuita en upstash.com antes del Día 4.',
+        'Recurso: "What is Redis?" — redis.io/docs (10 min de lectura).',
+        'Ver: "Redis in 100 seconds" — Fireship en YouTube.',
+        'Practicar comandos básicos desde la consola web de Upstash: SET, GET, PUBLISH.',
+      ],
+      medio: [
+        'Estudiar el patrón Pub/Sub: publicadores, suscriptores, canales.',
+        'Implementar un ejemplo básico con ioredis o redis-py.',
+        'Recurso: upstash.com/docs — ejemplos con Node.js y Python.',
+        'Explorar casos de uso reales: notificaciones, chat, dashboards en tiempo real.',
+      ],
+      alto: [
+        'Estudiar Redis Streams como alternativa más robusta a Pub/Sub básico.',
+        'Explorar Socket.io + Redis Adapter para escalar WebSockets.',
+        'Analizar límites del plan gratuito de Upstash y estrategias de optimización.',
+      ]
+    }
+  },
+  seguridad: {
+    icon: '🔐', color: '#F59E0B',
+    title: 'Seguridad, Autenticación y BD',
+    sub: 'JWT · Supabase · MongoDB · CORS',
+    niveles: {
+      bajo: [
+        'Entender qué es JWT: Header.Payload.Signature — leer jwt.io/introduction.',
+        'Crear cuenta en supabase.com (PostgreSQL gratuito en la nube).',
+        'Estudiar hashing de contraseñas: bcrypt vs almacenamiento en texto plano.',
+        'Recurso: "JWT Authentication Tutorial" — Web Dev Simplified (YouTube).',
+        'No guardar contraseñas en texto plano NUNCA — principio de seguridad básico.',
+      ],
+      medio: [
+        'Implementar flujo completo: registro → login → token → ruta protegida.',
+        'Estudiar CORS y por qué es importante en APIs públicas.',
+        'Conectar una API a Supabase con la SDK oficial.',
+        'Recurso: supabase.com/docs — sección de autenticación.',
+      ],
+      alto: [
+        'Implementar refresh tokens y estrategia de blacklist en Redis.',
+        'Estudiar Row Level Security (RLS) en Supabase para control de acceso a datos.',
+        'Explorar OAuth 2.0 como alternativa a JWT propio.',
+        'Aplicar principio de menor privilegio en el diseño de roles.',
+      ]
+    }
+  },
+  cloud: {
+    icon: '☁️', color: '#A78BFA',
+    title: 'Cloud Computing e IaC',
+    sub: 'AWS · CloudFormation · LocalStack · IaC',
+    niveles: {
+      bajo: [
+        'Estudiar modelos cloud: IaaS vs PaaS vs SaaS — recurso: aws.amazon.com/what-is-cloud-computing.',
+        'Crear cuenta en AWS con correo universitario (Free Tier — sin costo).',
+        'Instalar LocalStack con Docker para simular AWS localmente.',
+        'Recurso: "AWS in 10 minutes" — TechWorld with Nana (YouTube).',
+        'Entender qué es una plantilla YAML antes del Día 12.',
+      ],
+      medio: [
+        'Leer la guía de inicio de AWS CloudFormation — docs.aws.amazon.com/cloudformation.',
+        'Estudiar la estructura de un template: AWSTemplateFormatVersion, Resources, Parameters, Outputs.',
+        'Practicar con LocalStack: desplegar un S3 bucket con un template YAML básico.',
+        'Recurso: "LocalStack Tutorial for Beginners" (YouTube, gratuito).',
+      ],
+      alto: [
+        'Explorar AWS CDK (Cloud Development Kit) como alternativa programática a YAML.',
+        'Estudiar Changesets en CloudFormation para actualizaciones de infraestructura.',
+        'Comparar CloudFormation vs Terraform vs Pulumi para el contexto del proyecto.',
+        'Documentar decisiones de arquitectura en los READMEs del proyecto.',
+      ]
+    }
+  },
+  git: {
+    icon: '🗂️', color: '#F87171',
+    title: 'Git, GitHub y Colaboración',
+    sub: 'Control de versiones · CI/CD · Trabajo en equipo',
+    niveles: {
+      bajo: [
+        'Crear cuenta en github.com hoy mismo.',
+        'Aprender los 5 comandos esenciales: git init, add, commit, push, pull.',
+        'Recurso: "Git in 15 minutes" — Colt Steele (YouTube).',
+        'Crear el repositorio del curso antes del Día 1.',
+        'Instalar Git en tu PC o usar GitHub Codespaces en el navegador.',
+      ],
+      medio: [
+        'Aprender branches: git checkout -b feature/nombre.',
+        'Practicar pull requests: crear, revisar y aprobar.',
+        'Usar commits semánticos: feat:, fix:, docs:, chore:',
+        'Recurso: "GitHub Flow" — guides.github.com.',
+      ],
+      alto: [
+        'Configurar GitHub Actions para CI básico en el proyecto del curso.',
+        'Estudiar git rebase vs merge y cuándo usar cada uno.',
+        'Aplicar conventional commits y generar CHANGELOGs automáticos.',
+      ]
+    }
+  }
+};
+
+function getRecoLevel(score){
+  if(score <= 1.5) return 'bajo';
+  if(score <= 2.8) return 'medio';
+  return 'alto';
+}
+
+function calcularResultados(){
+  // Validar
+  const req = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11'];
+  for(const q of req){
+    if(!document.querySelector(`input[name="${q}"]:checked`)){
+      alert('Por favor responde todas las preguntas antes de ver tu diagnóstico.');
+      return;
+    }
+  }
+
+  const v = (name) => parseInt(document.querySelector(`input[name="${name}"]:checked`).value);
+
+  // Puntajes por bloque
+  const scores = {
+    fundamentos: (v('q1') + v('q2')) / 2,
+    apis:        (v('q3') + v('q4')) / 2,
+    mensajeria:   v('q5'),
+    seguridad:   (v('q6') + v('q7')) / 2,
+    cloud:       (v('q8') + v('q9')) / 2,
+    git:          v('q10'),
+  };
+
+  const total = Object.values(scores).reduce((a,b)=>a+b,0) / Object.keys(scores).length;
+
+  // Nivel global
+  let nivel, clase, label, desc;
+  if(total < 1.5){
+    nivel='A'; clase='lvl-A';
+    label='Nivel A — Explorador';
+    desc='Estás comenzando tu camino en el desarrollo backend. ¡Perfecto punto de partida! El curso está diseñado para que puedas avanzar desde cero. Con dedicación y las herramientas gratuitas del ecosistema, llegarás más lejos de lo que imaginas.';
+  } else if(total < 2.5){
+    nivel='B'; clase='lvl-B';
+    label='Nivel B — Desarrollador en Formación';
+    desc='Tienes bases sólidas y experiencia práctica inicial. El curso te dará las herramientas para dar el salto a arquitecturas distribuidas reales. Tu desafío es consolidar y conectar los conceptos que ya conoces.';
+  } else if(total < 3.3){
+    nivel='C'; clase='lvl-C';
+    label='Nivel C — Desarrollador Intermedio';
+    desc='Tienes experiencia real con APIs, bases de datos y control de versiones. El curso te desafiará con mensajería asíncrona, seguridad avanzada e IaC. Puedes ser un referente técnico para tu equipo.';
+  } else {
+    nivel='D'; clase='lvl-D';
+    label='Nivel D — Desarrollador Avanzado';
+    desc='Tu perfil es avanzado. El mayor valor que aportarás en el curso es la mentoría a tus compañeros y la exploración de los conceptos más complejos (IaC, arquitecturas de referencia, optimización). Tu desafío es profundidad, no amplitud.';
+  }
+
+  // Renderizar hero
+  const hero = document.getElementById('result-hero');
+  hero.className = 'result-hero ' + clase;
+  document.getElementById('result-badge').textContent = `Nivel ${nivel} · ${(total/4*100).toFixed(0)}% de dominio detectado`;
+  document.getElementById('result-score').textContent = `${(total/4*100).toFixed(0)}%`;
+  document.getElementById('result-label').textContent = label;
+  document.getElementById('result-desc').textContent = desc;
+
+  // Desglose
+  const breakdownEl = document.getElementById('score-breakdown');
+  const bloques = [
+    {key:'fundamentos', lbl:'Fundamentos'},
+    {key:'apis',        lbl:'APIs REST'},
+    {key:'mensajeria',  lbl:'Redis / Pub-Sub'},
+    {key:'seguridad',   lbl:'Seguridad + BD'},
+    {key:'cloud',       lbl:'Cloud / IaC'},
+    {key:'git',         lbl:'Git / GitHub'},
+  ];
+  breakdownEl.innerHTML = bloques.map(b => {
+    const pct = ((scores[b.key]/4)*100).toFixed(0);
+    const color = pct < 40 ? 'var(--red)' : pct < 65 ? 'var(--orange)' : pct < 85 ? 'var(--cyan)' : 'var(--green)';
+    return `<div class="score-item">
+      <div class="val" style="color:${color}">${pct}%</div>
+      <div class="lbl">${b.lbl}</div>
+    </div>`;
+  }).join('');
+
+  // Recomendaciones
+  const recosEl = document.getElementById('recos-container');
+  let html = '<div class="reco-grid">';
+  bloques.forEach(b => {
+    const reco = RECOS[b.key];
+    const lvl  = getRecoLevel(scores[b.key]);
+    const items = reco.niveles[lvl];
+    const pct   = ((scores[b.key]/4)*100).toFixed(0);
+    const tagCls = pct < 40 ? 'warn' : pct >= 75 ? 'ok' : '';
+    html += `
+    <div class="reco-block">
+      <div class="reco-block-header">
+        <div class="reco-icon" style="background:${reco.color}22;">${reco.icon}</div>
+        <div>
+          <div class="reco-block-title">${reco.title}</div>
+          <div class="reco-block-sub">${reco.sub} · <span class="tag ${tagCls}">${pct}% · ${lvl === 'bajo' ? 'Prioridad alta' : lvl === 'medio' ? 'Reforzar' : 'Avanzar'}</span></div>
+        </div>
+      </div>
+      <ul class="reco-list">
+        ${items.map(i=>`<li>${i}</li>`).join('')}
+      </ul>
+    </div>`;
+  });
+  html += '</div>';
+  recosEl.innerHTML = html;
+
+  // Mostrar
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
+
+  // Guardar para copia
+  window._resultData = { nombre: document.getElementById('nombre').value, carrera: document.getElementById('carrera').value, nivel, total, scores, label };
+}
+
+function copiarResultado(){
+  const d = window._resultData;
+  if(!d){ alert('Primero genera tu diagnóstico.'); return; }
+
+  const bloques = ['fundamentos','apis','mensajeria','seguridad','cloud','git'];
+  const labels  = ['Fundamentos','APIs REST','Redis/Pub-Sub','Seguridad+BD','Cloud/IaC','Git'];
+  const lineas = bloques.map((b,i) => `  ${labels[i]}: ${((d.scores[b]/4)*100).toFixed(0)}%`).join('\n');
+
+  const texto = `=== ACTIVIDAD 0 — DIAGNÓSTICO DE ENTRADA ===
+Programación IV · UPDS 2026
+
+Estudiante: ${d.nombre || '—'}
+Carrera: ${d.carrera || '—'}
+
+NIVEL GENERAL: ${d.nivel} — ${d.label}
+Puntaje global: ${(d.total/4*100).toFixed(0)}%
+
+DESGLOSE POR ÁREA:
+${lineas}
+
+Expectativas: ${document.getElementById('q12').value || '(sin respuesta)'}
+
+Generado: ${new Date().toLocaleString('es-BO')}
+==========================================`;
+
+  navigator.clipboard.writeText(texto).then(()=>{
+    alert('✅ Resultado copiado al portapapeles. Pégalo en el chat del curso o compártelo con el docente.');
+  }).catch(()=>{
+    prompt('Copia este texto manualmente:', texto);
+  });
+}
+</script>
+</body>
+</html>
